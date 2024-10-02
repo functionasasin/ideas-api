@@ -34,7 +34,7 @@ async def get_ideas(request: Request, upvotes: int = Query(None, ge=0), sort: So
 
     """ 
      upvotes: minimum number of upvotes to filter has to be >= 0
-     sorting: will only support upvotes for now..
+     sorting: will only support upvotes for now
      limit: the amount of ideas that are returned (max to 10)
      keyword: words to search for within the content (max of 50 characters)
     """
