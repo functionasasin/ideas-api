@@ -1,0 +1,40 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+
+# FastAPI specific
+*.log
+*.pid
+*.sock
+
+# Ignore database files
+*.sqlite3
+db.sqlite3
+
+# Pydantic settings cache
+*.pydantic_cache
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Ignore .env (environment variables file)
+.env
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.swp
+
+# Ignore testing outputs
+.coverage
+pytest_cache/
+
+# Ignore local Git configurations
+.gitconfig.local
