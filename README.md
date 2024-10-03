@@ -11,7 +11,7 @@ Steps to set up the API:
 1. Clone this repository:
 
     ```bash
-    git clone <https://github.com/functionasasin/ideas-api.git>
+    git clone https://github.com/functionasasin/ideas-api.git
     ```
 
 2. Navigate into the project directory:
@@ -24,7 +24,7 @@ Steps to set up the API:
 
     ```bash
     pip install -r requirements.txt
-
+    ```
 
 4. Set up your .env file, it should look like this or you may change the variable names:
 
