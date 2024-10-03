@@ -38,3 +38,11 @@ Steps to set up the API:
     ```bash
     uvicorn src.main:app --reload
     ```
+
+## API Usage
+
+### Endpoints
+
+#### 1. **Submit an Idea**
+
+**Description:** Submits a new idea.
