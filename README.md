@@ -41,8 +41,4 @@ Steps to set up the API:
 
 ## API Usage
 
-### Endpoints
-
-#### 1. **Submit an Idea**
-
-**Description:** Submits a new idea.
+### Wiki
