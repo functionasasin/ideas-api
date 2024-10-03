@@ -1,8 +1,8 @@
 from fastapi import FastAPI
 from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
-from app.routes import idea_routes, admin_routes
-from app.config import MONGO_URI
+from src.routes import idea_routes, admin_routes
+from src.config import MONGO_URI
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):

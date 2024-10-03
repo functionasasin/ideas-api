@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from app.helpers.db_helper import admin_helper
-from app.models.admin_model import Admin
-from app.utils.jwt import verify_password, create_access_token, verify_token, get_password_hash
-from app.config import ACCESS_TOKEN_EXPIRE_MINUTES
+from src.helpers.db_helper import admin_helper
+from src.models.admin_model import Admin
+from src.utils.jwt import verify_password, create_access_token, verify_token, get_password_hash
+from src.config import ACCESS_TOKEN_EXPIRE_MINUTES
 from bson import ObjectId
 from datetime import timedelta
 

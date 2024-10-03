@@ -2,8 +2,8 @@ import os
 from enum import Enum
 from fastapi import APIRouter, HTTPException, Request, Query
 from typing import List
-from app.models.idea_model import Idea, IdeaResponse
-from app.helpers.db_helper import idea_helper
+from src.models.idea_model import Idea, IdeaResponse
+from src.helpers.db_helper import idea_helper
 from bson import ObjectId
 from dotenv import load_dotenv
 
