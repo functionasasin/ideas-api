@@ -2,7 +2,7 @@
 
 ## Description
 
-The API is for an idea-sharing web application. Users can submit their ideas and upvote others' ideas, while the system limits each upvote based on the user's IP address. Administrators will have the ability to delete any ideas they think is inappropriate or unnecessary.
+This API allows users to submit ideas, view ideas, and upvote ideas. Admins can register, log in, and perform administrative actions such as deleting ideas. The API uses JWT authentication for admin routes.
 
 ## Installation
 
