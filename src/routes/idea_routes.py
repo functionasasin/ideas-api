@@ -3,7 +3,6 @@ from enum import Enum
 from fastapi import APIRouter, Request, Query
 from typing import List
 from bson import ObjectId
-from dotenv import load_dotenv
 
 from src.models import Idea, IdeaResponse, SuccessResponse
 from src.helpers import idea_helper, create_success_response
@@ -11,9 +10,7 @@ from src.core import EmptyContentException, DuplicateUpvoteException, InvalidIDE
 
 router = APIRouter()
 
-load_dotenv()
-
-TEST_MODE = os.getenv("TEST_MODE", "False") == "True"  # For testing, can remove
+TEST_MODE = False
 
 class SortOptions(str, Enum):
     upvotes = "upvotes"

@@ -10,7 +10,7 @@ def create_success_response(
     response = SuccessResponse(message=message, data=data)
     return JSONResponse(
         status_code=status_code,
-        content=response.model_dump(exclude_unset=True)
+        content=response.model_dump()
     )
 
 def create_error_response(
@@ -22,5 +22,5 @@ def create_error_response(
     response = ErrorResponse(error=error_code, message=message, details=details)
     return JSONResponse(
         status_code=status_code,
-        content=response.model_dump(exclude_unset=True)
+        content=response.model_dump()
     )
