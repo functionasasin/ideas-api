@@ -1,5 +1,7 @@
 from fastapi import FastAPI, Request
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.exceptions import HTTPException
+from fastapi.exception_handlers import http_exception_handler as default_http_exception_handler
 from contextlib import asynccontextmanager
 from src.routes import idea_routes, admin_routes
 from src.config import MONGO_URI
@@ -46,6 +48,18 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         details=exc.errors(),
         status_code=HTTPStatusCodes.BAD_REQUEST.value
     )
+
+@app.exception_handler(HTTPException)
+async def http_exception_handler_401(request: Request, exc: HTTPException):
+    if exc.status_code == 401:
+        return create_error_response(
+            error_code=ErrorCodes.UNAUTHORIZED_ACCESS.value,
+            message=exc.detail or "Unauthorized access",
+            details=None,
+            status_code=exc.status_code
+        )
+    else:
+        return await default_http_exception_handler(request, exc)
 
 # uvicorn src.main:app --reload
 
