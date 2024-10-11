@@ -6,7 +6,7 @@ from src.core import EmptyContentException, DuplicateUpvoteException, InvalidIDE
 
 router = APIRouter()
 
-TEST_MODE = True
+TEST_MODE = False
 
 @router.get("/ideas", response_model=SuccessResponse)
 async def get_ideas(
@@ -61,7 +61,7 @@ async def submit_idea(idea: Idea, request: Request):
     )
 
 # IP-based upvoting so I don't have to implement a user auth
-@router.post("/ideas/{id}/upvotes", response_model=SuccessResponse)
+@router.post("/ideas/{id}/upvote", response_model=SuccessResponse)
 async def upvote_idea(id: str, request: Request):
     ip_address = request.client.host
     ideas_collection = request.app.state.db["ideas"]
