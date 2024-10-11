@@ -68,7 +68,7 @@ async def get_current_admin(
         raise InvalidCredentialsException()
     return admin_helper(admin)
 
-@router.delete("/ideas/{id}", status_code=HTTPStatusCodes.NO_CONTENT.value)
+@router.delete("/ideas/{id}", response_model=SuccessResponse, status_code=HTTPStatusCodes.OK.value) # Fix no content response
 async def delete_idea(
     id: str, request: Request, current_admin: dict = Depends(get_current_admin)
 ):
@@ -80,10 +80,21 @@ async def delete_idea(
     except Exception:
         raise InvalidIDException()
 
+    idea = await ideas_collection.find_one({"_id": idea_id})
+    if not idea:
+        raise ResourceNotFoundException(resource_name="Idea")
+    
     result = await ideas_collection.delete_one({"_id": idea_id})
     if result.deleted_count == 0:
         raise ResourceNotFoundException(resource_name="Idea")
+    
+    deleted_data = {
+        "id": str(idea_id),
+        "content": idea.get("content")
+    }
+
     return create_success_response(
+        data=deleted_data,
         message="Idea deleted successfully",
-        status_code=HTTPStatusCodes.NO_CONTENT.value
+        status_code=HTTPStatusCodes.OK.value
     )
