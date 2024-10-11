@@ -1,13 +1,16 @@
 from fastapi.responses import JSONResponse
+from typing import TypeVar, Optional
 from src.models import SuccessResponse, ErrorResponse
 from src.core import HTTPStatusCodes
 
+T = TypeVar('T')
+
 def create_success_response(
-    data=None,
-    message="Operation successful",
-    status_code=HTTPStatusCodes.OK.value,
-):
-    response = SuccessResponse(message=message, data=data)
+    data: Optional[T] = None,
+    message: str = "Operation successful",
+    status_code: int = HTTPStatusCodes.OK.value,
+) -> JSONResponse:
+    response = SuccessResponse[T](message=message, data=data)
     return JSONResponse(
         status_code=status_code,
         content=response.model_dump()

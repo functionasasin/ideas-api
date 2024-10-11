@@ -1,10 +1,6 @@
-import os
-from enum import Enum
 from fastapi import APIRouter, Request, Query
-from typing import List
 from bson import ObjectId
-
-from src.models import Idea, IdeaResponse, SuccessResponse
+from src.models import Idea, SuccessResponse
 from src.helpers import idea_helper, create_success_response
 from src.core import EmptyContentException, DuplicateUpvoteException, InvalidIDException, ResourceNotFoundException, HTTPStatusCodes
 

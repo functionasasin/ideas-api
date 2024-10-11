@@ -2,7 +2,6 @@ from fastapi import APIRouter, Depends, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from bson import ObjectId
 from datetime import timedelta
-
 from src.models import AdminCreate, AdminResponse, Token, SuccessResponse
 from src.helpers import create_success_response, admin_helper
 from src.core import InvalidCredentialsException, UserAlreadyExistsException, UnauthorizedAccessException, InvalidIDException, ResourceNotFoundException, HTTPStatusCodes
@@ -28,8 +27,13 @@ async def register_admin(admin: AdminCreate, request: Request):
     result = await admins_collection.insert_one(admin_data)
     new_admin = await admins_collection.find_one({"_id": result.inserted_id})
 
+    admin_response = AdminResponse(
+        id=str(new_admin["_id"]),
+        username=new_admin["username"]
+    )
+
     return create_success_response(
-        data=admin_helper(new_admin),
+        data=admin_response,
         message="Admin registered successfully",
         status_code=HTTPStatusCodes.CREATED.value
     )
@@ -48,8 +52,10 @@ async def login_admin(
     access_token = create_access_token(
         data={"sub": admin["username"]}, expires_delta=access_token_expires
     )
+    token_response = Token(access_token=access_token, token_type="bearer")
+
     return create_success_response(
-        data={"access_token": access_token, "token_type": "bearer"},
+        data=token_response,
         message="Login successful"
     )
 
