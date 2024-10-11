@@ -46,7 +46,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         error_code=ErrorCodes.VALIDATION_ERROR.value,
         message="Validation error",
         details=exc.errors(),
-        status_code=HTTPStatusCodes.BAD_REQUEST.value
+        status_code=HTTPStatusCodes.UNPROCESSABLE_ENTITY.value
     )
 
 @app.exception_handler(HTTPException)
