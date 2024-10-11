@@ -1,24 +1,29 @@
 import os
 from enum import Enum
-from fastapi import APIRouter, HTTPException, Request, Query
+from fastapi import APIRouter, Request, Query
 from typing import List
-from src.models.idea_model import Idea, IdeaResponse
-from src.helpers.db_helper import idea_helper
 from bson import ObjectId
 from dotenv import load_dotenv
+
+from src.models import Idea, IdeaResponse, SuccessResponse
+from src.helpers import idea_helper, create_success_response
+from src.core import EmptyContentException, DuplicateUpvoteException, InvalidIDException, ResourceNotFoundException, HTTPStatusCodes
 
 router = APIRouter()
 
 load_dotenv()
 
-TEST_MODE = os.getenv("TEST_MODE", "False") == "True" # For testing, can remove
+TEST_MODE = os.getenv("TEST_MODE", "False") == "True"  # For testing, can remove
 
 class SortOptions(str, Enum):
     upvotes = "upvotes"
 
 # Retrieves a list of ideas from db with sorting, filtering, and pagination options
-@router.get("/ideas", response_model=List[IdeaResponse])
-async def get_ideas(request: Request, upvotes: int = Query(None, ge=0), sort: SortOptions = None,
+@router.get("/ideas", response_model=SuccessResponse)
+async def get_ideas(
+    request: Request,
+    upvotes: int = Query(None, ge=0),
+    sort: SortOptions = None,
     limit: int = Query(10, ge=1),
     skip: int = Query(0, ge=0),
     keyword: str = Query(
@@ -31,13 +36,6 @@ async def get_ideas(request: Request, upvotes: int = Query(None, ge=0), sort: So
 ):
     ideas_collection = request.app.state.db["ideas"]
     query = {}
-
-    """ 
-     upvotes: minimum number of upvotes to filter has to be >= 0
-     sorting: will only support upvotes for now
-     limit: the amount of ideas that are returned (max to 10)
-     keyword: words to search for within the content (max of 50 characters)
-    """
 
     if upvotes is not None:
         query["upvote_count"] = {"$gte": upvotes}
@@ -54,14 +52,17 @@ async def get_ideas(request: Request, upvotes: int = Query(None, ge=0), sort: So
 
     ideas = [idea_helper(idea) async for idea in cursor]
 
-    return ideas
+    return create_success_response(
+        data=ideas,
+        message="Ideas retrieved successfully"
+    )
 
-@router.post("/ideas", response_model=IdeaResponse, status_code=201)
+@router.post("/ideas", response_model=SuccessResponse, status_code=HTTPStatusCodes.CREATED.value)
 async def submit_idea(idea: Idea, request: Request):
     ideas_collection = request.app.state.db["ideas"]
 
     if not idea.content.strip():
-        raise HTTPException(status_code=400, detail="Idea content cannot be empty.")
+        raise EmptyContentException()
 
     idea_doc = idea.model_dump()
     idea_doc["upvote_count"] = 0
@@ -70,27 +71,40 @@ async def submit_idea(idea: Idea, request: Request):
     result = await ideas_collection.insert_one(idea_doc)
     new_idea = await ideas_collection.find_one({"_id": result.inserted_id})
 
-    return idea_helper(new_idea)
+    return create_success_response(
+        data=idea_helper(new_idea),
+        message="Idea submitted successfully",
+        status_code=HTTPStatusCodes.CREATED.value
+    )
 
 # IP-based upvoting so I don't have to implement a user auth
-@router.post("/ideas/{id}/upvotes")
+@router.post("/ideas/{id}/upvotes", response_model=SuccessResponse)
 async def upvote_idea(id: str, request: Request):
     ip_address = request.client.host
     ideas_collection = request.app.state.db["ideas"]
 
-    idea = await ideas_collection.find_one({"_id": ObjectId(id)})
+    # Validate ObjectId
+    try:
+        idea_id = ObjectId(id)
+    except Exception:
+        raise InvalidIDException()
+
+    idea = await ideas_collection.find_one({"_id": idea_id})
     if not idea:
-        raise HTTPException(status_code=404, detail="Idea not found")
+        raise ResourceNotFoundException(resource_name="Idea")
 
     # This is purely for testing, because it limits to 1 upvote per IP
     if not TEST_MODE:
         if ip_address in idea["upvoted_by"]:
-            raise HTTPException(status_code=400, detail="You have already upvoted this idea")
+            raise DuplicateUpvoteException()
 
     await ideas_collection.update_one(
-        {"_id": ObjectId(id)},
+        {"_id": idea_id},
         {"$inc": {"upvote_count": 1}, "$push": {"upvoted_by": ip_address}}
     )
 
-    updated_idea = await ideas_collection.find_one({"_id": ObjectId(id)})
-    return {"message": "Upvote successful", "upvote_count": updated_idea["upvote_count"]}
+    updated_idea = await ideas_collection.find_one({"_id": idea_id})
+    return create_success_response(
+        data={"upvote_count": updated_idea["upvote_count"]},
+        message="Upvote successful"
+    )

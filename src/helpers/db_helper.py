@@ -11,5 +11,5 @@ def admin_helper(admin) -> dict:
     return {
         "id": str(admin["_id"]),
         "username": admin["username"],
-        "hashed_password": admin["hashed_password"]
+        # Remove hashed_password
     }

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import List
 
 class Idea(BaseModel):
-    content: str = Field(..., min_length=1, max_length=500)
+    content: str = Field(max_length=500)
 
 class IdeaResponse(Idea):
     id: str

@@ -1,8 +1,12 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from motor.motor_asyncio import AsyncIOMotorClient
 from contextlib import asynccontextmanager
 from src.routes import idea_routes, admin_routes
 from src.config import MONGO_URI
+from src.helpers import create_error_response
+from src.core import InvalidCredentialsException, ResourceNotFoundException, UserAlreadyExistsException, UnauthorizedAccessException, DuplicateUpvoteException, EmptyContentException, InvalidIDException, ErrorCodes, HTTPStatusCodes
+from src.exception_handlers import invalid_credentials_exception_handler, resource_not_found_exception_handler, user_already_exists_exception_handler, unauthorized_access_exception_handler, duplicate_upvote_exception_handler, empty_content_exception_handler,invalid_id_exception_handler
+from fastapi.exceptions import RequestValidationError
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -26,7 +30,24 @@ def main_page():
 app.include_router(idea_routes.router)
 app.include_router(admin_routes.router)
 
-# uvicorn app.main:app --reload
+app.add_exception_handler(InvalidCredentialsException, invalid_credentials_exception_handler)
+app.add_exception_handler(ResourceNotFoundException, resource_not_found_exception_handler)
+app.add_exception_handler(UserAlreadyExistsException, user_already_exists_exception_handler)
+app.add_exception_handler(UnauthorizedAccessException, unauthorized_access_exception_handler)
+app.add_exception_handler(DuplicateUpvoteException, duplicate_upvote_exception_handler)
+app.add_exception_handler(EmptyContentException, empty_content_exception_handler)
+app.add_exception_handler(InvalidIDException, invalid_id_exception_handler)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return create_error_response(
+        error_code=ErrorCodes.VALIDATION_ERROR.value,
+        message="Validation error",
+        details=exc.errors(),
+        status_code=HTTPStatusCodes.BAD_REQUEST.value
+    )
+
+# uvicorn src.main:app --reload
 
 
 
