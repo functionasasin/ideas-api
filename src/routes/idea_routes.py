@@ -10,17 +10,12 @@ from src.core import EmptyContentException, DuplicateUpvoteException, InvalidIDE
 
 router = APIRouter()
 
-TEST_MODE = False
+TEST_MODE = True
 
-class SortOptions(str, Enum):
-    upvotes = "upvotes"
-
-# Retrieves a list of ideas from db with sorting, filtering, and pagination options
 @router.get("/ideas", response_model=SuccessResponse)
 async def get_ideas(
     request: Request,
     upvotes: int = Query(None, ge=0),
-    sort: SortOptions = None,
     limit: int = Query(10, ge=1),
     skip: int = Query(0, ge=0),
     keyword: str = Query(
@@ -41,12 +36,7 @@ async def get_ideas(
         query["content"] = {"$regex": keyword, "$options": "i"}
 
     cursor = ideas_collection.find(query)
-
-    if sort == SortOptions.upvotes:
-        cursor = cursor.sort("upvote_count", -1)
-
     cursor = cursor.skip(skip).limit(limit)
-
     ideas = [idea_helper(idea) async for idea in cursor]
 
     return create_success_response(
