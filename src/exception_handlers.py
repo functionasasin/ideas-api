@@ -2,7 +2,7 @@ from fastapi import Request
 from src.helpers import create_error_response
 
 async def invalid_credentials_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,
@@ -10,7 +10,7 @@ async def invalid_credentials_exception_handler(request: Request, exc):
     )
 
 async def user_already_exists_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,
@@ -18,7 +18,7 @@ async def user_already_exists_exception_handler(request: Request, exc):
     )
 
 async def unauthorized_access_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,
@@ -26,7 +26,7 @@ async def unauthorized_access_exception_handler(request: Request, exc):
     )
 
 async def invalid_id_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,
@@ -34,7 +34,7 @@ async def invalid_id_exception_handler(request: Request, exc):
     )
 
 async def resource_not_found_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,
@@ -42,7 +42,7 @@ async def resource_not_found_exception_handler(request: Request, exc):
     )
 
 async def duplicate_upvote_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,
@@ -50,7 +50,7 @@ async def duplicate_upvote_exception_handler(request: Request, exc):
     )
 
 async def empty_content_exception_handler(request: Request, exc):
-    return create_error_response[None](
+    return create_error_response(
         error_code=exc.error_code,
         message=exc.detail,
         details=None,

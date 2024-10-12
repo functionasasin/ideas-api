@@ -1,5 +1,4 @@
 from fastapi import FastAPI, Request
-from typing import List, Dict, Any
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.exceptions import HTTPException
 from fastapi.exception_handlers import http_exception_handler as default_http_exception_handler
@@ -43,7 +42,7 @@ app.add_exception_handler(InvalidIDException, invalid_id_exception_handler)
 
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    return create_error_response[List[Dict[str, Any]]](
+    return create_error_response(
         error_code=ErrorCodes.VALIDATION_ERROR.value,
         message="Validation error",
         details=exc.errors(),

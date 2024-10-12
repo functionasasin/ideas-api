@@ -12,4 +12,4 @@ class ErrorResponse(BaseModel):
     status: str = "Error"
     error: str
     message: str
-    details: Optional[T] = None
+    details: Optional[Any] = None

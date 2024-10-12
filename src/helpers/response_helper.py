@@ -1,5 +1,5 @@
 from fastapi.responses import JSONResponse
-from typing import TypeVar, Optional
+from typing import TypeVar, Optional, Any
 from src.models import SuccessResponse, ErrorResponse
 from src.core import HTTPStatusCodes
 
@@ -17,12 +17,12 @@ def create_success_response(
     )
 
 def create_error_response(
-    error_code,
-    message="An error occurred",
-    details: Optional[T] = None,
+    error_code: str,
+    message: str = "An error occurred",
+    details: Optional[Any] = None,
     status_code: int = HTTPStatusCodes.BAD_REQUEST.value,
 ) -> JSONResponse:
-    response = ErrorResponse[T](error=error_code, message=message, details=details)
+    response = ErrorResponse(error=error_code, message=message, details=details)
     return JSONResponse(
         status_code=status_code,
         content=response.model_dump()
