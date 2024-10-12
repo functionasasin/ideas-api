@@ -19,10 +19,10 @@ def create_success_response(
 def create_error_response(
     error_code,
     message="An error occurred",
-    details=None,
-    status_code=HTTPStatusCodes.BAD_REQUEST.value,
-):
-    response = ErrorResponse(error=error_code, message=message, details=details)
+    details: Optional[T] = None,
+    status_code: int = HTTPStatusCodes.BAD_REQUEST.value,
+) -> JSONResponse:
+    response = ErrorResponse[T](error=error_code, message=message, details=details)
     return JSONResponse(
         status_code=status_code,
         content=response.model_dump()
