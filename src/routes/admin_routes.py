@@ -74,7 +74,7 @@ async def get_current_admin(
         raise InvalidCredentialsException()
     return admin_helper(admin)
 
-@router.delete("/ideas/{id}", response_model=SuccessResponse, status_code=HTTPStatusCodes.OK.value) # Fix no content response
+@router.delete("/ideas/{id}/delete", response_model=SuccessResponse, status_code=HTTPStatusCodes.OK.value) # Fix no content response
 async def delete_idea(
     id: str, request: Request, current_admin: dict = Depends(get_current_admin)
 ):
